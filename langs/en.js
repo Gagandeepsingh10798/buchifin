@@ -1,4 +1,11 @@
 module.exports = {
+  REQUEST_SENT_SUCCESSFULLY: "Request sent successfully",
+  REQUESTS_FETCHED_SUCCESSFULLY: "Requests fetched successfully",
+  REQUEST_FETCHED_SUCCESSFULLY: "Request fetched successfully",
+  REQUEST_UPDATED_SUCCESSFULLY: "Request updated successfully",
+  APP_CREATED_SUCCESSFULLY: "App created successfully",
+  APPS_FETCHED_SUCCESSFULLY: "Apps fetched successfully",
+  APP_FETCHED_SUCCESSFULLY: "App fetched successfully",
   EMAIL_ALREADY_ASSOCIATED_WITH_ANOTHER_ACCOUNT: "Email already associated with another account",
   PHONE_NUMBER_ALREADY_ASSOCIATED_WITH_ANOTHER_ACCOUNT: "Phone number already associated with another account",
   CUSTOMER_REGISTERED_SUCCESSFULLY: "Customer registered successfully",

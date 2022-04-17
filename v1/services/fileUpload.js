@@ -22,17 +22,17 @@ const AdminProfilePicUpload = multer({
     }
 })
 
-const CustomerProfilePicStorage = multer.diskStorage({
+const AppCategoryIconStorage = multer.diskStorage({
     destination: function (req, file, cb) {
-        let paths = path.resolve(__dirname, '../..' + config.get('PATHS').IMAGE.CUSTOMER.ACTUAL);
+        let paths = path.resolve(__dirname, '../..' + config.get('PATHS').IMAGE.APP_CATEGORY.ACTUAL);
         cb(null, paths)
     },
     filename: function (req, file, cb) {
         cb(null, file.fieldname + '-' + Date.now() + `.${file.originalname.split('.').pop()}`)
     }
 });
-const CustomerProfilePicUpload = multer({
-    storage: CustomerProfilePicStorage, fileFilter: (req, file, cb) => {
+const AppCategoryIconUpload = multer({
+    storage: AppCategoryIconStorage, fileFilter: (req, file, cb) => {
         if (file.mimetype == "image/png" || file.mimetype == "image/jpg" || file.mimetype == "image/jpeg") {
             cb(null, true);
         } else {
@@ -73,7 +73,7 @@ const DriverDocumentsStorage = multer.diskStorage({
 });
 const DriverDocumentsUpload = multer({
     storage: DriverDocumentsStorage, fileFilter: (req, file, cb) => {
-        console.log({file : req.files});
+        console.log({ file: req.files });
         if (file.mimetype == "application/pdf" || file.mimetype == "image/png" || file.mimetype == "image/jpg" || file.mimetype == "image/jpeg") {
             cb(null, true);
         } else {
@@ -103,7 +103,7 @@ const FuelCategoryPicUpload = multer({
     }
 })
 module.exports = {
-    CustomerProfilePicUpload: CustomerProfilePicUpload,
+    AppCategoryIconUpload: AppCategoryIconUpload,
     DriverProfilePicUpload: DriverProfilePicUpload,
     DriverDocumentsUpload: DriverDocumentsUpload,
     AdminProfilePicUpload: AdminProfilePicUpload,

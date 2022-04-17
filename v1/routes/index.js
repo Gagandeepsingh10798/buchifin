@@ -1,5 +1,5 @@
 module.exports = {
     admin: require('./admin'),
-    // customer: require('./customer'),
+    customer: require('./customer'),
     // driver: require('./driver')
 }

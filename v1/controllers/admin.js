@@ -1266,4 +1266,49 @@ module.exports = {
       next(error);
     }
   },
+  /*
+  Manage Requests
+  */
+  getRequest: async (req, res, next) => {
+    try {
+      let requests = await models.Request.find({ isDeleted: false }).lean();
+      requests = {
+        status: 200,
+        message: "REQUESTS_FETCHED_SUCCESSFULLY",
+        data: requests
+      }
+      return universal.response(res, requests.status, requests.message, requests.data, req.lang);
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  },
+  getRequestById: async (req, res, next) => {
+    try {
+      let request = await models.Request.findOne({ _id: req.params.id }).lean();
+      request = {
+        status: 200,
+        message: "REQUEST_FETCHED_SUCCESSFULLY",
+        data: request
+      }
+      return universal.response(res, request.status, request.message, request.data, req.lang);
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  },
+  updateRequest: async (req, res, next) => {
+    try {
+      let request = await models.Request.findOneAndUpdate({ _id: req.params.id }, { $set: { status: Number(req.body.status) } }, { new: true }).lean();
+      request = {
+        status: 200,
+        message: "REQUEST_UPDATED_SUCCESSFULLY",
+        data: request
+      }
+      return universal.response(res, request.status, request.message, request.data, req.lang);
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  },
 };

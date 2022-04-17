@@ -9,7 +9,7 @@
         "SECRET_KEY": "SECRET_KEY",
         "EXPIRES_IN": "1d"
     },
-    "MONGOOSE_ENCRYPTION_KEY":"748upfxYY3D0Nf3rrKfPQzmvOLUXkhnxDGIcgtvw3aA=",
+    "MONGOOSE_ENCRYPTION_KEY": "748upfxYY3D0Nf3rrKfPQzmvOLUXkhnxDGIcgtvw3aA=",
     "FCM_TOKEN": "AAAAxDg2DMg:APA91bH1sVyshALHAZXqTlvl33iIn8v1osQCpsKxwGkFXXv0xOwmmvUxij99hsoVMOyqGAQzBvc_A-Z32xfAMmU8slAOTNgtAgvApUqKWXao7HWmK1GLguTDxSoG3jOIYyeZYKNEOe5_",
     "EMAIL_SERVICE": {
         "EMAIL": "gagandeep.apptunix@gmail.com",
@@ -32,17 +32,17 @@
                 "ACTUAL": "/uploads/images/admin/",
                 "STATIC": "/admin/profile/image/"
             },
-            "CUSTOMER": {
-                "ACTUAL": "/uploads/images/customer/",
-                "STATIC": "/customer/profile/image/"
+            "USER": {
+                "ACTUAL": "/uploads/images/user/",
+                "STATIC": "/user/profile/image/"
             },
             "DRIVER": {
                 "ACTUAL": "/uploads/images/driver/",
                 "STATIC": "/driver/profile/image/"
             },
-            "FUEL_CATEGORY": {
-                "ACTUAL": "/uploads/images/fuel/category",
-                "STATIC": "/fuel/category/image/"
+            "APP_CATEGORY": {
+                "ACTUAL": "/uploads/images/app",
+                "STATIC": "/app/image/"
             }
         },
         "FILE": {
