@@ -3,7 +3,7 @@ Import Required Modules
 */
 const config = require('config');
 const express = require("express");
-const redis = require('redis');
+// const redis = require('redis');
 const morgan = require('morgan')
 const app = express();
 const mongoose = require('mongoose')
@@ -12,14 +12,14 @@ app.use(cors());
 /*
 Add SSL Certificate
 */
-// const fs = require("fs");
+const fs = require("fs");
 let options = {}
-// if (process.env.NODE_ENV == "live") {
-//     options = {
-//         key: fs.readFileSync("/etc/letsencrypt/live/appgrowthcompany.com/privkey.pem"),
-//         cert: fs.readFileSync("/etc/letsencrypt/live/appgrowthcompany.com/fullchain.pem")
-//     }
-// }
+if (process.env.NODE_ENV == "live") {
+    options = {
+        key: fs.readFileSync("/etc/letsencrypt/live/appgrowthcompany.com/privkey.pem"),
+        cert: fs.readFileSync("/etc/letsencrypt/live/appgrowthcompany.com/fullchain.pem")
+    }
+}
 /*
 Initialize Server
 */
@@ -33,8 +33,8 @@ else {
 /* 
 Socket Initialization
 */
-// const { io } = require("./utils/Sockets");
-// io.attach(server);
+const { io } = require("./utils/Sockets");
+io.attach(server);
 
 server.listen(config.get('PORT'), () => {
     console.log(`****************************************** ${'ENVIRONMENT:::' + process.env.NODE_ENV} *******************************************************`);
@@ -66,10 +66,6 @@ app.use(express.urlencoded({ extended: false }));
 Serving Static Files
 */
 app.use(config.get('PATHS').IMAGE.ADMIN.STATIC, express.static(__dirname + config.get('PATHS').IMAGE.ADMIN.ACTUAL));
-// app.use(config.get('PATHS').IMAGE.CUSTOMER.STATIC, express.static(__dirname + config.get('PATHS').IMAGE.CUSTOMER.ACTUAL));
-// app.use(config.get('PATHS').IMAGE.DRIVER.STATIC, express.static(__dirname + config.get('PATHS').IMAGE.DRIVER.ACTUAL));
-// app.use(config.get('PATHS').FILE.DRIVER.STATIC, express.static(__dirname + config.get('PATHS').FILE.DRIVER.ACTUAL));
-// app.use(config.get('PATHS').IMAGE.FUEL_CATEGORY.STATIC, express.static(__dirname + config.get('PATHS').IMAGE.FUEL_CATEGORY.ACTUAL));
 /*
 API Hits
 */

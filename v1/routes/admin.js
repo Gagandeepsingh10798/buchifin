@@ -17,11 +17,11 @@ router.put("/profile/password", validations.admin.isAdminValid, controllers.admi
 router.post("/profile/forget", controllers.admin.forgotPassword)
 router.put("/profile/verify", controllers.admin.verifyAndUpdatePassword)
 /*
-Manage Categories
+Manage Apps
 */
-router.post("/app", service.upload.AppCategoryIconUpload.single('icon'), controllers.appCategory.create);
-router.get("/app", controllers.appCategory.get);
-router.get("/app/:id", controllers.appCategory.getById);
+router.post("/app", validations.admin.isAdminValid, service.upload.AppCategoryIconUpload.single('icon'), controllers.appCategory.create);
+router.get("/app", validations.admin.isAdminValid, controllers.appCategory.get);
+router.get("/app/:id", validations.admin.isAdminValid, controllers.appCategory.getById);
 /*
 Manage User Requests
 */
