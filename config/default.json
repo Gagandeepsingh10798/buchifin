@@ -17,12 +17,16 @@
                 "STATIC": "/admin/profile/image/"
             },
             "USER": {
-                "ACTUAL": "/uploads/images/user/",
-                "STATIC": "/user/profile/image/"
+                "ACTUAL": "/uploads/images/customer/",
+                "STATIC": "/customer/profile/image/"
             },
-            "APP_CATEGORY": {
-                "ACTUAL": "/uploads/images/app",
+            "APP": {
+                "ACTUAL": "/uploads/images/app/",
                 "STATIC": "/app/image/"
+            },
+            "NEWS": {
+                "ACTUAL": "/uploads/images/news/",
+                "STATIC": "/news/image/"
             }
         },
         "FILE": {

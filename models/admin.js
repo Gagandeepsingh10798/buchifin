@@ -36,7 +36,7 @@ const AdminModel = new Schema({
         type: String,
         default: ''
     },
-    location: {
+    address: {
         type: String,
         default: ''
     },
@@ -47,6 +47,10 @@ const AdminModel = new Schema({
     deviceToken: {
         type: String,
         default: ''
+    },
+    isDeleted: {
+        type: Boolean,
+        default: false
     }
 }, {
     timestamps: true,

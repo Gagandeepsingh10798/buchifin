@@ -1,17 +1,4 @@
-const config = require("config");
-const validations = require("../validations");
-const universal = require("../../utils");
-const service = require("../services");
-const messages = require("../../constants").Messages;
-const codes = require("../../constants").Codes;
-const services = require("../services");
-const moment = require("moment");
-const mongoose = require("mongoose");
-const agenda = require("../../utils/Scheduling");
-const { Socket } = require("../../utils/Sockets");
 const models = require("../../models");
-const { Promo } = require("../../models");
-const promo = require("../../models/promo");
 
 module.exports = {
   /*

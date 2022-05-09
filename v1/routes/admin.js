@@ -9,26 +9,34 @@ router.post("/signup", service.upload.AdminProfilePicUpload.single('profilePic')
 router.post("/login", controllers.admin.login);
 router.post("/logout", validations.admin.isAdminValid, controllers.admin.logout);
 /*
-CRUD
+CRUD 
 */
-router.get("/profile", validations.admin.isAdminValid, controllers.admin.profile);
+router.get("/profile", validations.admin.isAdminValid, controllers.admin.getProfile);
 router.put("/profile", validations.admin.isAdminValid, service.upload.AdminProfilePicUpload.single('profilePic'), controllers.admin.updateProfile);
-router.put("/profile/password", validations.admin.isAdminValid, controllers.admin.changePassword);
-router.post("/profile/forget", controllers.admin.forgotPassword)
-router.put("/profile/verify", controllers.admin.verifyAndUpdatePassword)
+// router.put("/profile/password", validations.admin.isAdminValid, controllers.admin.changePassword);
+// router.post("/profile/forget", controllers.admin.forgotPassword)
+// router.put("/profile/verify", controllers.admin.verifyAndUpdatePassword)
 /*
 Manage Apps
 */
-router.post("/app", validations.admin.isAdminValid, service.upload.AppCategoryIconUpload.single('icon'), controllers.appCategory.create);
-router.get("/app", validations.admin.isAdminValid, controllers.appCategory.get);
-router.get("/app/:id", validations.admin.isAdminValid, controllers.appCategory.getById);
+router.post("/app", validations.admin.isAdminValid, service.upload.AppIconUpload.single('icon'), controllers.admin.createApp);
+router.get("/app", validations.admin.isAdminValid, controllers.admin.getApps);
+// router.get("/app/:id", validations.admin.isAdminValid, controllers.app.getById);
+// router.put("/app/:id", validations.admin.isAdminValid, controllers.app.update);
 /*
-Manage User Requests
+Manage News
 */
-router.get("/request", controllers.admin.getRequest);
-router.get("/request", controllers.admin.getRequestById);
-router.put("/request/:id", controllers.admin.updateRequest);
+router.post("/news", validations.admin.isAdminValid, service.upload.NewsIconUpload.single('icon'), controllers.admin.createNews);
+router.get("/news", validations.admin.isAdminValid, controllers.admin.getNews);
 /*
 Manage Users
 */
+router.post("/user", validations.admin.isAdminValid, service.upload.CustomerProfilePicUpload.single('profilePic'), controllers.admin.createUser);
+router.get("/user", validations.admin.isAdminValid, controllers.admin.getUsers);
+/*
+Manage Users Apps
+*/
+router.post("/user/app", validations.admin.isAdminValid, controllers.admin.linkApp);
+router.get("/user/:id/app/", validations.admin.isAdminValid, controllers.admin.getUserApps);
+router.get("/user/app/:id", validations.admin.isAdminValid, controllers.admin.getUserAppById);
 module.exports = router

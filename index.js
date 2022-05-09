@@ -66,6 +66,7 @@ app.use(express.urlencoded({ extended: false }));
 Serving Static Files
 */
 app.use(config.get('PATHS').IMAGE.ADMIN.STATIC, express.static(__dirname + config.get('PATHS').IMAGE.ADMIN.ACTUAL));
+app.use(config.get('PATHS').IMAGE.APP.STATIC, express.static(__dirname + config.get('PATHS').IMAGE.APP.ACTUAL));
 /*
 API Hits
 */
@@ -101,5 +102,5 @@ app.use((err, req, res, next) => {
     if (err.message == "jwt expired" || err.message == "invalid signature" || err.message == "No Auth") err.status = 401
     const status = err.status || 400;
     if (typeof err == typeof "") { res.status(status).send({ error: false, status: status, message: err.message || err || "", result: err }) }
-    else res.status(status).send({ error: false, status: status, message: err.message || "", result: { ...err } });
+    else res.status(status).send({ status: status, message: err.message || "", result: { ...err } });
 });

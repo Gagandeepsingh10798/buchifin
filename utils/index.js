@@ -15,10 +15,10 @@ module.exports = {
     response: async (res, status, message, data, lang) => {
         if (status != 200) {
             console.log(status, message, data, lang)
-            await res.status(status).send({ status: status, message: Messages[lang][message] });
+            await res.status(status).send({ status: status, message: Messages[lang][message], result: data });
         }
         else {
-        
+
             await res.status(status).send({ status: status, message: Messages[lang][message], result: data });
         }
     },
@@ -45,7 +45,7 @@ module.exports = {
     },
     jwtVerify: async (token) => {
         try {
-            return jwt.verify(token, config.get("JWT_OPTIONS").SECRET_KEY);
+            return await jwt.verify(token, config.get("JWT_OPTIONS").SECRET_KEY);
         } catch (error) {
             throw error;
         }
@@ -96,16 +96,16 @@ module.exports = {
         }
     },
     getStatus: (statusString) => {
-        const status =  {
+        const status = {
             "NOT ACCEPTED": 0,
-            "ACCEPTED" :1,
-            "LOADED" :2, 
-            "DISPATCHED" :3,
-            "ARRIVED" :4,
-            "DELIVERED" :5,
-            "REJECTED" :6 
-         }
-         console.log({status: status[statusString]});
-         return status[statusString]
+            "ACCEPTED": 1,
+            "LOADED": 2,
+            "DISPATCHED": 3,
+            "ARRIVED": 4,
+            "DELIVERED": 5,
+            "REJECTED": 6
+        }
+        console.log({ status: status[statusString] });
+        return status[statusString]
     }
 }
