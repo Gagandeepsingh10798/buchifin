@@ -18,6 +18,10 @@ const OtpModel = new Schema({
         type: String,
         trim: true
     },
+    type: {
+        type: String,
+        enum: ['PASSWORD', 'SIGNUP', 'LOGIN']
+    },
     expireAt: {
         type: Date,
         default: new Date()

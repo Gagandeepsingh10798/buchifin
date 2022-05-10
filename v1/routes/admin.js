@@ -13,9 +13,9 @@ CRUD
 */
 router.get("/profile", validations.admin.isAdminValid, controllers.admin.getProfile);
 router.put("/profile", validations.admin.isAdminValid, service.upload.AdminProfilePicUpload.single('profilePic'), controllers.admin.updateProfile);
-// router.put("/profile/password", validations.admin.isAdminValid, controllers.admin.changePassword);
-// router.post("/profile/forget", controllers.admin.forgotPassword)
-// router.put("/profile/verify", controllers.admin.verifyAndUpdatePassword)
+router.put("/profile/password/change", validations.admin.isAdminValid, controllers.admin.changePassword);
+router.post("/profile/password/forgot", controllers.admin.forgotPassword);
+router.post("/profile/password/reset", controllers.admin.resetPassword);
 /*
 Manage Apps
 */

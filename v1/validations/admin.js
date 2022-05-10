@@ -99,8 +99,10 @@ module.exports = {
     });
     return await validateSchema(req[property], schema);
   },
-  validateNewPassword: async (req, property) => {
+  validateResetPassword: async (req, property) => {
     let schema = joi.object().keys({
+      email: joi.string().trim().lowercase().required(),
+      code: joi.string().required(),
       password: joi.string().required(),
     });
     return await validateSchema(req[property], schema);

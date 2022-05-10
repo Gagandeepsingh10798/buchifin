@@ -20,6 +20,7 @@ const Projections = {
   getUserAppById: { "__v": 0, "password": 0 },
   getUserApps: { "__v": 0, "password": 0 }
 };
+const moment = require('moment');
 
 module.exports = {
   /*
@@ -96,9 +97,6 @@ module.exports = {
   getProfile: async (req, res, next) => {
     try {
       let admin = await Models.Admin.findOne({ _id: ObjectId(req.user._id), isDeleted: false }, Projections.getProfile).lean();
-      if (!admin) {
-        return await universal.response(res, CODES.BAD_REQUEST, MESSAGES.ADMIN_NOT_EXIST, {}, req.lang);
-      }
       admin = {
         status: CODES.OK,
         message: MESSAGES.PROFILE_FETCHED_SUCCESSFULLY,
@@ -116,11 +114,7 @@ module.exports = {
         req.body.profilePic = config.get("PATHS").IMAGE.ADMIN.STATIC + req.file.filename;
       }
       await validations.admin.validateUpdateProfile(req, "body");
-      let admin = await Models.Admin.findOne({ _id: ObjectId(req.user._id), isDeleted: false }).lean();
-      if (!admin) {
-        return await universal.response(res, CODES.BAD_REQUEST, MESSAGES.ADMIN_NOT_EXIST, {}, req.lang);
-      }
-      await Models.Admin.findOneAndUpdate({ _id: ObjectId(req.user._id), isDeleted: false }, req.body);
+      let admin = await Models.Admin.findOneAndUpdate({ _id: ObjectId(req.user._id), isDeleted: false }, req.body);
       admin = await Models.Admin.findOne({ _id: ObjectId(req.user._id), isDeleted: false }, Projections.updateProfile).lean();
       admin = {
         status: CODES.OK,
@@ -130,6 +124,74 @@ module.exports = {
       return await universal.response(res, admin.status, admin.message, admin.data, req.lang);
     } catch (error) {
       if (req.file) await universal.deleteFiles([config.get("PATHS").IMAGE.ADMIN.ACTUAL + req.file.filename]);
+      console.log(error);
+      next(error);
+    }
+  },
+  changePassword: async (req, res, next) => {
+    try {
+      await validations.admin.validateChangePassword(req, "body");
+      const oldPasswordValid = await universal.comparePasswordUsingBcrypt(req.body.oldPassword, req.user.password);
+      if (!oldPasswordValid) {
+        return await universal.response(res, CODES.BAD_REQUEST, MESSAGES.OLD_PASSWORD_IS_INCORRECT, {}, req.lang);
+      }
+      const newPassword = await universal.hashPasswordUsingBcrypt(req.body.newPassword);
+      await Models.Admin.findOneAndUpdate({ _id: ObjectId(req.user._id), isDeleted: false }, { password: newPassword });
+      return await universal.response(res, CODES.OK, MESSAGES.PASSWORD_CHANGE_SUCCESSFULLY, {}, req.lang);
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  },
+  forgotPassword: async (req, res, next) => {
+    try {
+      await validations.admin.validateForgotPassword(req, "body");
+      let admin = await Models.Admin.findOne({ email: req.body.email, isDeleted: false }).lean();
+      if (!admin) {
+        return await universal.response(res, CODES.BAD_REQUEST, MESSAGES.ADMIN_NOT_EXIST, {}, req.lang);
+      }
+      const OTP = {
+        code: "0000",
+        email: admin.email,
+        phone: admin.phone,
+        countryCode: admin.countryCode,
+        type: "PASSWORD",
+        expireAt: moment().add(3, 'minutes')
+      }
+      const OTP_SENT = await Models.Otp.findOne({
+        code: "0000",
+        email: admin.email,
+        phone: admin.phone,
+        countryCode: admin.countryCode,
+        type: "PASSWORD",
+      }).lean();
+      if (OTP_SENT && (moment(OTP_SENT.expireAt) >= moment())) {
+        return await universal.response(res, CODES.BAD_REQUEST, MESSAGES.OTP_ALREADY_SENT_TO_PROVIDED_EMAIL, {}, req.lang);
+      }
+      await Models.Otp(OTP).save()
+      return await universal.response(res, CODES.OK, MESSAGES.OTP_SENT_SUCCESSFULLY, {}, req.lang);
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  },
+  resetPassword: async (req, res, next) => {
+    try {
+      await validations.admin.validateResetPassword(req, "body");
+      const { email, code } = req.body;
+      const OTP = await Models.Otp.findOne({ email, code, type: "PASSWORD" }).lean();
+      if (!OTP) {
+        return await universal.response(res, CODES.BAD_REQUEST, MESSAGES.INCORRECT_OTP, {}, req.lang);
+      }
+      if (moment(OTP.expireAt) <= moment()) {
+        await Models.Otp.findOneAndDelete({ _id: ObjectId(OTP._id) });
+        return await universal.response(res, CODES.BAD_REQUEST, MESSAGES.OTP_EXPIRED, {}, req.lang);
+      }
+      const newPassword = await universal.hashPasswordUsingBcrypt(req.body.password);
+      await Models.Admin.findOneAndUpdate({ email: req.body.email, isDeleted: false }, { password: newPassword });
+      await Models.Otp.findOneAndDelete({ _id: ObjectId(OTP._id) });
+      return await universal.response(res, CODES.OK, MESSAGES.PASSWORD_RESET_SUCCESSFULLY, {}, req.lang);
+    } catch (error) {
       console.log(error);
       next(error);
     }

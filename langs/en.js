@@ -1,4 +1,8 @@
 module.exports = {
+  OTP_ALREADY_SENT_TO_PROVIDED_EMAIL: "Otp already sent to provided email",
+  INCORRECT_EMAIL_ADDRESS: "Incorrect Email Address",
+  INCORRECT_OTP: "Incorrect Otp",
+  OTP_EXPIRED: "Otp expired",
   PROFILE_UPDATED_SUCCESSFULLY: "Profile updated successfully",
   PROFILE_FETCHED_SUCCESSFULLY: "Profile fetched successfully",
   ADMIN_LOGGED_OUT_SUCCESSFULLY: "Admin logged out successfully",
