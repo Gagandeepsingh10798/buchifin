@@ -117,6 +117,21 @@ module.exports = {
     });
     return await validateSchema(req[property], schema);
   },
+  validateGetApp: async (req, property) => {
+    let schema = joi.object().keys({
+      id: joi.string().required()
+    });
+    return await validateSchema(req[property], schema);
+  },
+  validateUpdateApp: async (req, property) => {
+    let schema = joi.object().keys({
+      name: joi.string().optional(),
+      icon: joi.string().optional(),
+      status: joi.string().valid('ACTIVE', 'BLOCKED').optional(),
+      isDeleted: joi.bool().optional()
+    });
+    return await validateSchema(req[property], schema);
+  },
   /*
   Manage News
   */

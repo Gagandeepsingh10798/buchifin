@@ -5,6 +5,7 @@ const MESSAGES = require("../../constants").Messages;
 const CODES = require("../../constants").Codes;
 const Models = require('../../models');
 const ObjectId = require('mongoose').Types.ObjectId;
+const moment = require('moment');
 const Projections = {
   signUp: { "password": 0, "deviceToken": 0, "deviceType": 0, "createdAt": 0, "updatedAt": 0, "__v": 0 },
   login: { "deviceToken": 0, "deviceType": 0, "createdAt": 0, "updatedAt": 0, "__v": 0 },
@@ -12,6 +13,8 @@ const Projections = {
   updateProfile: { "password": 0, "deviceToken": 0, "deviceType": 0, "createdAt": 0, "updatedAt": 0, "__v": 0 },
   createApp: { "__v": 0 },
   getApps: { "__v": 0 },
+  getApp:{ "__v": 0 },
+  updateApp: { "__v": 0 },
   createNews: { "__v": 0 },
   getNews: { "__v": 0 },
   createUser: { "password": 0, "deviceToken": 0, "deviceType": 0, "createdAt": 0, "updatedAt": 0, "__v": 0 },
@@ -20,12 +23,9 @@ const Projections = {
   getUserAppById: { "__v": 0, "password": 0 },
   getUserApps: { "__v": 0, "password": 0 }
 };
-const moment = require('moment');
 
 module.exports = {
-  /*
-    Admin On-Boarding
-  */
+  /* Admin On-Boarding */
   signUp: async (req, res, next) => {
     try {
       if (req.file) {
@@ -168,7 +168,7 @@ module.exports = {
       if (OTP_SENT && (moment(OTP_SENT.expireAt) >= moment())) {
         return await universal.response(res, CODES.BAD_REQUEST, MESSAGES.OTP_ALREADY_SENT_TO_PROVIDED_EMAIL, {}, req.lang);
       }
-      await Models.Otp(OTP).save()
+      await Models.Otp(OTP).save();
       return await universal.response(res, CODES.OK, MESSAGES.OTP_SENT_SUCCESSFULLY, {}, req.lang);
     } catch (error) {
       console.log(error);
@@ -196,9 +196,7 @@ module.exports = {
       next(error);
     }
   },
-  /*
-  Manage Apps
-  */
+  /* Manage Apps */
   createApp: async (req, res, next) => {
     try {
       if (req.file) {
@@ -228,7 +226,7 @@ module.exports = {
       apps = {
         status: CODES.OK,
         message: MESSAGES.APPS_FETCHED_SUCCESSFULLY,
-        data: { apps }
+        data: { records: apps }
       };
       return await universal.response(res, apps.status, apps.message, apps.data, req.lang);
     } catch (error) {
@@ -236,9 +234,50 @@ module.exports = {
       next(error);
     }
   },
-  /*
-  Manage News
-  */
+  getApp: async (req, res, next) => {
+    try {
+      await validations.admin.validateGetApp(req,"params");
+      let app = await Models.App.findOne({ _id: ObjectId(req.params.id) }, Projections.getApp).lean();
+      if(!app){
+        return await universal.response(res, CODES.BAD_REQUEST, MESSAGES.APP_NOT_EXIST, {}, req.lang);
+      }
+      app = {
+        status: CODES.OK,
+        message: MESSAGES.APP_FETCHED_SUCCESSFULLY,
+        data: app
+      };
+      return await universal.response(res, app.status, app.message, app.data, req.lang);
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  },
+  updateApp: async (req, res, next) => {
+    try {
+      if (req.file) {
+        req.body.icon = config.get("PATHS").IMAGE.APP.STATIC + req.file.filename;
+      }
+      await validations.admin.validateUpdateApp(req, "body");
+      req.body.updatedBy = req.user._id;
+      let app = await Models.App.findOne({ _id: ObjectId(req.params.id) }, Projections.updateApp).lean();
+      if(!app){
+        return await universal.response(res, CODES.BAD_REQUEST, MESSAGES.APP_NOT_EXIST, {}, req.lang);
+      }
+      await Models.App.findOneAndUpdate({_id: ObjectId(req.params.id)}, req.body);
+      app = await Models.App.findById(ObjectId(app._id), Projections.updateApp).lean();
+      app = {
+        status: CODES.OK,
+        message: MESSAGES.APP_UPDATED_SUCCESSFULLY,
+        data: app
+      };
+      return await universal.response(res, app.status, app.message, app.data, req.lang);
+    } catch (error) {
+      if (req.file) await universal.deleteFiles([config.get("PATHS").IMAGE.APP.ACTUAL + req.file.filename]);
+      console.log(error);
+      next(error);
+    }
+  }, 
+  /* Manage News */
   createNews: async (req, res, next) => {
     try {
       if (req.file) {
@@ -267,7 +306,7 @@ module.exports = {
       news = {
         status: CODES.OK,
         message: MESSAGES.NEWS_FETCHED_SUCCESSFULLY,
-        data: { news }
+        data: { records: news }
       };
       return await universal.response(res, news.status, news.message, news.data, req.lang);
     } catch (error) {
@@ -275,9 +314,7 @@ module.exports = {
       next(error);
     }
   },
-  /*
-  Manage Users
-  */
+  /* Manage Users */
   createUser: async (req, res, next) => {
     try {
       if (req.file) {
@@ -315,7 +352,7 @@ module.exports = {
       customers = {
         status: CODES.OK,
         message: MESSAGES.CUSTOMERS_FETCHED_SUCCESSFULLY,
-        data: { customers }
+        data: { records: customers }
       };
       return await universal.response(res, customers.status, customers.message, customers.data, req.lang);
     } catch (error) {
@@ -323,9 +360,7 @@ module.exports = {
       next(error);
     }
   },
-  /*
-  Manage Users App
-  */
+  /* Manage Users App */
   linkApp: async (req, res, next) => {
     try {
       await validations.admin.validateLinkApp(req, "body");
@@ -358,7 +393,7 @@ module.exports = {
       customerApps = {
         status: CODES.OK,
         message: MESSAGES.CUSTOMER_APPS_FETCHED_SUCCESSFULLY,
-        data: { customerApps }
+        data: { records: customerApps }
       };
       return await universal.response(res, customerApps.status, customerApps.message, customerApps.data, req.lang);
     } catch (error) {

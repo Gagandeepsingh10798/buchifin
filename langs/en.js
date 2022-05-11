@@ -1,4 +1,7 @@
 module.exports = {
+  OTP_ALREADY_SENT:"Otp already sent",
+  APP_UPDATED_SUCCESSFULLY: "App updated successfully",
+  APP_FETCHED_SUCCESSFULLY: "App fetched successfully",
   OTP_ALREADY_SENT_TO_PROVIDED_EMAIL: "Otp already sent to provided email",
   INCORRECT_EMAIL_ADDRESS: "Incorrect Email Address",
   INCORRECT_OTP: "Incorrect Otp",

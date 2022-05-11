@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const controllers = require('../controllers');
-const validations = require('../validations')
-const service = require('../services')
+const validations = require('../validations');
+const service = require('../services');
 /*
 On-Boarding
 */
@@ -21,8 +21,8 @@ Manage Apps
 */
 router.post("/app", validations.admin.isAdminValid, service.upload.AppIconUpload.single('icon'), controllers.admin.createApp);
 router.get("/app", validations.admin.isAdminValid, controllers.admin.getApps);
-// router.get("/app/:id", validations.admin.isAdminValid, controllers.app.getById);
-// router.put("/app/:id", validations.admin.isAdminValid, controllers.app.update);
+router.get("/app/:id", validations.admin.isAdminValid, controllers.admin.getApp);
+router.put("/app/:id", validations.admin.isAdminValid, service.upload.AppIconUpload.single('icon'), controllers.admin.updateApp);
 /*
 Manage News
 */
@@ -39,4 +39,4 @@ Manage Users Apps
 router.post("/user/app", validations.admin.isAdminValid, controllers.admin.linkApp);
 router.get("/user/:id/app/", validations.admin.isAdminValid, controllers.admin.getUserApps);
 router.get("/user/app/:id", validations.admin.isAdminValid, controllers.admin.getUserAppById);
-module.exports = router
+module.exports = router;
