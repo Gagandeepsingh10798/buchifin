@@ -1,9 +1,39 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const AdminModel = new Schema({
+const UserModel = new Schema({
+    address: {
+        lat: {
+            type: String,
+            default: ''
+        },
+        lng: {
+            type: String,
+            default: ''
+        },
+        street: {
+            type: String,
+            required: true
+        },
+        city: {
+            type: String,
+            required: true
+        },
+        state: {
+            type: String,
+            required: true
+        },
+        zip: {
+            type: String,
+            required: true
+        }
+    },
     profilePic: {
         type: String,
         default: ''
+    },
+    gender: {
+        type: String,
+        enum: ['MALE', 'FEMALE']
     },
     firstName: {
         type: String,
@@ -36,7 +66,11 @@ const AdminModel = new Schema({
         type: String,
         default: ''
     },
-    address: {
+    lat: {
+        type: String,
+        default: ''
+    },
+    lng: {
         type: String,
         default: ''
     },
@@ -48,6 +82,18 @@ const AdminModel = new Schema({
         type: String,
         default: ''
     },
+    type: {
+        type: String,
+        enum: ['ADMIN', 'SUBADMIN', 'RETAILER', 'MANUFACTURER']
+    },
+    status: {
+        type: String,
+        enum: ['ACTIVE', 'BLOCKED', 'REJECTED'],
+        default: 'ACTIVE'
+    },
+    dob: {
+        type: Date
+    },
     isDeleted: {
         type: Boolean,
         default: false
@@ -57,5 +103,5 @@ const AdminModel = new Schema({
     toObject: { virtuals: true },
     toJSON: { virtuals: true }
 });
-const Admin = mongoose.model('Admin', AdminModel);
-module.exports = Admin;
+const User = mongoose.model('User', UserModel);
+module.exports = User;

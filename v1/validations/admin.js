@@ -21,7 +21,7 @@ module.exports = {
         const accessToken = req.headers.authorization;
         const decodeData = await universal.jwtVerify(accessToken);
         if (!decodeData) throw new Error("Invalid Auth");
-        const userData = await Model.Admin.findOne({ _id: decodeData._id, isDeleted: false }).lean().exec();
+        const userData = await Model.User.findOne({ _id: decodeData._id, isDeleted: false, type: "ADMIN" }).lean().exec();
         if (userData) {
           req.user = userData;
           next();
@@ -37,6 +37,19 @@ module.exports = {
   },
   validateSignUp: async (req, property) => {
     let schema = joi.object().keys({
+      address: joi.object({
+        lat: joi.string().default(''),
+        lng: joi.string().default(''),
+        street: joi.string().required(),
+        city: joi.string().required(),
+        state: joi.string().required(),
+        country: joi.string().required(),
+        zip: joi.string().required()
+      }).required(),
+      dob: joi.date(),
+      lat: joi.string().default(''),
+      lng: joi.string().default(''),
+      gender: joi.string().valid('MALE', 'FEMALE'),
       firstName: joi.string().trim().required(),
       lastName: joi.string().trim().required(),
       email: joi.string().trim().lowercase().required(),
@@ -51,7 +64,7 @@ module.exports = {
         .trim()
         .min(2)
         .required(),
-      profilePic: joi.string().trim().lowercase().required(),
+      // profilePic: joi.string().trim().lowercase().required(),
       password: joi.string().required(),
       deviceType: joi.string().optional(),
       deviceToken: joi.string().optional(),
@@ -60,6 +73,17 @@ module.exports = {
   },
   validateUpdateProfile: async (req, property) => {
     let schema = joi.object().keys({
+      gender: joi.string().valid('MALE', 'FEMALE').optional(),
+      dob: joi.date().optional(),
+      address: joi.object({
+        lat: joi.string().optional(''),
+        lng: joi.string().optional(''),
+        street: joi.string().optional(),
+        city: joi.string().optional(),
+        state: joi.string().optional(),
+        country: joi.string().optional(),
+        zip: joi.string().optional()
+      }).optional(),
       firstName: joi.string().trim().optional(),
       lastName: joi.string().trim().optional(),
       email: joi.string().trim().lowercase().optional(),
@@ -73,8 +97,7 @@ module.exports = {
         .regex(/^[0-9,+]+$/)
         .trim()
         .min(2)
-        .optional(),
-      profilePic: joi.string().trim().lowercase().optional()
+        .optional()
     });
     return await validateSchema(req[property], schema);
   },

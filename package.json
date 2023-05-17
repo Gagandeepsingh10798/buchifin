@@ -1,7 +1,7 @@
 {
-  "name": "drhackapp",
+  "name": "farmer",
   "version": "1.0.0",
-  "description": "DrHack App",
+  "description": "farmer",
   "main": "index.js",
   "scripts": {
     "start_local": "set NODE_ENV=undefined && nodemon index.js",

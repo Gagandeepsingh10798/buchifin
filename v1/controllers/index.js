@@ -1,4 +1,3 @@
 module.exports = {
-    admin: require('./admin'),
-    customer: require('./customer')
+    admin: require('./admin')
 };

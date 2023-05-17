@@ -66,7 +66,6 @@ app.use(express.urlencoded({ extended: false }));
 Serving Static Files
 */
 app.use(config.get('PATHS').IMAGE.ADMIN.STATIC, express.static(__dirname + config.get('PATHS').IMAGE.ADMIN.ACTUAL));
-app.use(config.get('PATHS').IMAGE.APP.STATIC, express.static(__dirname + config.get('PATHS').IMAGE.APP.ACTUAL));
 /*
 API Hits
 */

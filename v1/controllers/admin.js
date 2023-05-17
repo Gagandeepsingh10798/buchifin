@@ -7,10 +7,10 @@ const Models = require('../../models');
 const ObjectId = require('mongoose').Types.ObjectId;
 const moment = require('moment');
 const Projections = {
-  signUp: { "password": 0, "deviceToken": 0, "deviceType": 0, "createdAt": 0, "updatedAt": 0, "__v": 0 },
-  login: { "deviceToken": 0, "deviceType": 0, "createdAt": 0, "updatedAt": 0, "__v": 0 },
-  getProfile: { "password": 0, "deviceToken": 0, "deviceType": 0, "createdAt": 0, "updatedAt": 0, "__v": 0 },
-  updateProfile: { "password": 0, "deviceToken": 0, "deviceType": 0, "createdAt": 0, "updatedAt": 0, "__v": 0 },
+  signUp: { "password": 0, "deviceToken": 0, "deviceType": 0, "createdAt": 0, "updatedAt": 0, "__v": 0, "type": 0, "status": 0, "isDeleted": 0 },
+  login: { "deviceToken": 0, "deviceType": 0, "createdAt": 0, "updatedAt": 0, "__v": 0, "isDeleted": 0, "type": 0 },
+  getProfile: { "password": 0, "deviceToken": 0, "deviceType": 0, "createdAt": 0, "updatedAt": 0, "__v": 0 , "isDeleted": 0,"type": 0 },
+  updateProfile: { "password": 0, "deviceToken": 0, "deviceType": 0, "createdAt": 0, "updatedAt": 0, "isDeleted": 0,"__v": 0 , "type": 0},
   createApp: { "__v": 0 },
   getApps: { "__v": 0 },
   getApp:{ "__v": 0 },
@@ -33,16 +33,17 @@ module.exports = {
       }
       req.body.password = await universal.hashPasswordUsingBcrypt(req.body.password);
       await validations.admin.validateSignUp(req, "body");
-      const isEmailUsed = await Models.Admin.findOne({ email: req.body.email, isDeleted: false }).lean();
+      const isEmailUsed = await Models.User.findOne({ email: req.body.email, isDeleted: false, type: 'ADMIN' }).lean();
       if (isEmailUsed) {
         return await universal.response(res, CODES.BAD_REQUEST, MESSAGES.EMAIL_ALREADY_ASSOCIATED_WITH_ANOTHER_ACCOUNT, {}, req.lang);
       }
-      const isPhoneUsed = await Models.Admin.findOne({ phone: req.body.phone, countryCode: req.body.countryCode, isDeleted: false }).lean();
+      const isPhoneUsed = await Models.User.findOne({ phone: req.body.phone, countryCode: req.body.countryCode, isDeleted: false, type: 'ADMIN' }).lean();
       if (isPhoneUsed) {
         return await universal.response(res, CODES.BAD_REQUEST, MESSAGES.PHONE_NUMBER_ALREADY_ASSOCIATED_WITH_ANOTHER_ACCOUNT, {}, req.lang);
       }
-      let admin = await Models.Admin(req.body).save();
-      admin = await Models.Admin.findById(ObjectId(admin.id), Projections.signUp).lean();
+      req.body.type = "ADMIN"
+      let admin = await Models.User(req.body).save();
+      admin = await Models.User.findById(ObjectId(admin.id), Projections.signUp).lean();
       admin.authToken = await universal.jwtSign({ _id: admin._id });
       admin = {
         status: CODES.OK,
@@ -59,7 +60,7 @@ module.exports = {
   login: async (req, res, next) => {
     try {
       await validations.admin.validateLogin(req, "body");
-      let admin = await Models.Admin.findOne({ email: req.body.email, isDeleted: false }, Projections.login).lean();
+      let admin = await Models.User.findOne({ email: req.body.email, isDeleted: false, type: 'ADMIN' }, Projections.login).lean();
       if (!admin) {
         return await universal.response(res, CODES.BAD_REQUEST, MESSAGES.ADMIN_NOT_EXIST, {}, req.lang);
       }
@@ -82,7 +83,7 @@ module.exports = {
   },
   logout: async (req, res, next) => {
     try {
-      await Models.Admin.findOneAndUpdate({ _id: ObjectId(req.user._id), isDeleted: false }, { deviceToken: "" }).lean();
+      await Models.User.findOneAndUpdate({ _id: ObjectId(req.user._id), type: "ADMIN", isDeleted: false }, { deviceToken: "" }).lean();
       let admin = {
         status: CODES.OK,
         message: MESSAGES.ADMIN_LOGGED_OUT_SUCCESSFULLY,
@@ -96,7 +97,7 @@ module.exports = {
   },
   getProfile: async (req, res, next) => {
     try {
-      let admin = await Models.Admin.findOne({ _id: ObjectId(req.user._id), isDeleted: false }, Projections.getProfile).lean();
+      let admin = await Models.User.findOne({ _id: ObjectId(req.user._id), isDeleted: false }, Projections.getProfile).lean();
       admin = {
         status: CODES.OK,
         message: MESSAGES.PROFILE_FETCHED_SUCCESSFULLY,
@@ -114,8 +115,8 @@ module.exports = {
         req.body.profilePic = config.get("PATHS").IMAGE.ADMIN.STATIC + req.file.filename;
       }
       await validations.admin.validateUpdateProfile(req, "body");
-      let admin = await Models.Admin.findOneAndUpdate({ _id: ObjectId(req.user._id), isDeleted: false }, req.body);
-      admin = await Models.Admin.findOne({ _id: ObjectId(req.user._id), isDeleted: false }, Projections.updateProfile).lean();
+      let admin = await Models.User.findOneAndUpdate({ _id: ObjectId(req.user._id), isDeleted: false }, req.body);
+      admin = await Models.User.findOne({ _id: ObjectId(req.user._id), isDeleted: false }, Projections.updateProfile).lean();
       admin = {
         status: CODES.OK,
         message: MESSAGES.PROFILE_UPDATED_SUCCESSFULLY,
@@ -136,7 +137,7 @@ module.exports = {
         return await universal.response(res, CODES.BAD_REQUEST, MESSAGES.OLD_PASSWORD_IS_INCORRECT, {}, req.lang);
       }
       const newPassword = await universal.hashPasswordUsingBcrypt(req.body.newPassword);
-      await Models.Admin.findOneAndUpdate({ _id: ObjectId(req.user._id), isDeleted: false }, { password: newPassword });
+      await Models.User.findOneAndUpdate({ _id: ObjectId(req.user._id), isDeleted: false, type: "ADMIN" }, { password: newPassword });
       return await universal.response(res, CODES.OK, MESSAGES.PASSWORD_CHANGE_SUCCESSFULLY, {}, req.lang);
     } catch (error) {
       console.log(error);
@@ -146,7 +147,7 @@ module.exports = {
   forgotPassword: async (req, res, next) => {
     try {
       await validations.admin.validateForgotPassword(req, "body");
-      let admin = await Models.Admin.findOne({ email: req.body.email, isDeleted: false }).lean();
+      let admin = await Models.User.findOne({ email: req.body.email, isDeleted: false, type: "ADMIN" }).lean();
       if (!admin) {
         return await universal.response(res, CODES.BAD_REQUEST, MESSAGES.ADMIN_NOT_EXIST, {}, req.lang);
       }
@@ -188,7 +189,7 @@ module.exports = {
         return await universal.response(res, CODES.BAD_REQUEST, MESSAGES.OTP_EXPIRED, {}, req.lang);
       }
       const newPassword = await universal.hashPasswordUsingBcrypt(req.body.password);
-      await Models.Admin.findOneAndUpdate({ email: req.body.email, isDeleted: false }, { password: newPassword });
+      await Models.User.findOneAndUpdate({ email: req.body.email, isDeleted: false }, { password: newPassword });
       await Models.Otp.findOneAndDelete({ _id: ObjectId(OTP._id) });
       return await universal.response(res, CODES.OK, MESSAGES.PASSWORD_RESET_SUCCESSFULLY, {}, req.lang);
     } catch (error) {
