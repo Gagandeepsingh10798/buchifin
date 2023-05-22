@@ -1,0 +1,82 @@
+@import "../../../assets/css/base.scss";
+
+.main-content {
+  padding-top: 70px;
+  @media (min-width: 1025px) {
+    padding-left: 265px;
+  }
+}
+
+.left_sidebar {
+  background-color: $secondary-color;
+  padding: 15px 0 50px;
+  position: $fixed;
+  top: 71px;
+  left: 0;
+  bottom: 0;
+  width: 265px;
+  z-index: 101;
+  overflow: $hidden;
+  @include transition(all, 0.5s, ease-in-out);
+  @media (max-width: 1024px) {
+    @include transform(translateX(-100%));
+    &.active {
+      @include transform(translateX(0%));      
+    }
+  }
+  .main_menu {
+    overflow-x: $hidden;
+    overflow-y: $auto;
+    list-style: $none;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    li {
+      margin-top: 1px;
+      padding: 0;
+      a {
+        width: 100%;
+        font-size: $f16;
+        display: $block;
+        padding: 14px 18px;
+        color: $white-color;
+        &:hover {
+          background: $primary-color;
+        }
+        i {
+          text-align: $center;
+          margin-right: 10px;
+          width: 28px;
+          img {
+            max-width: 22px;
+            min-width: 18px;
+          }
+        }
+      }
+    }
+  }
+}
+
+.logout_btn {
+  width: 265px;
+  padding: 14px 18px;
+  position: $fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+  color: $white-color;
+  &:hover {
+    background: $primary-color;
+    color: $white-color;
+  }
+  i {
+    text-align: $center;
+    margin-right: 10px;
+    width: 28px;
+    img {
+      max-width: 22px;
+      min-width: 18px;
+    }
+  }
+}

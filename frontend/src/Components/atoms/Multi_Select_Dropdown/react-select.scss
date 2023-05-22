@@ -1,0 +1,32 @@
+@import '../../../assets/css/base.scss';
+
+.react-select-dropmenu {
+    height: 36px;
+    .react-select {
+        &__control {
+            min-height: 36px;
+            min-width: 200px;
+            @media (min-width:1601px){                
+                min-height:50px;
+            }
+        }
+        &__option {           
+            border-bottom: 1px solid $white-color;
+            &:last-child {
+                border-bottom: 0;
+            }
+            label {
+                text-transform: $capitalize;
+                color: $dark-grey-color;
+                padding-left: 7px;
+                margin: 0;
+            }
+            &--is-selected, &--is-focused {
+                background: $primary-color;
+                label {
+                    color: $white-color;
+                }
+            }
+        }
+    }
+}

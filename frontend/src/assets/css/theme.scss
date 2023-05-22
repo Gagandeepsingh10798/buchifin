@@ -1,0 +1,229 @@
+// _theme.scss
+* {-webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; font-family: $default-font; box-sizing:border-box;}
+html {overflow-x:$hidden; height:100%;}
+body {height:100%; font-weight: $font-regular; color: $base-color; font-family: $default-font; font-size:$f16; overflow-x:$hidden;}
+body::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar {
+    width: 4px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    box-shadow:$none;
+    background-color: $white-color; 
+} 
+::-webkit-scrollbar-thumb {
+    background-color: $secondary-color;
+    @include border-radius (3px);
+}
+img {-webkit-touch-callout: $none; border:0;}
+h1, h2, h3, h4, h5, h6 {
+    font-weight: $font-semibold;
+  }
+h1, .h1 {
+    font-size:$f30+4;
+    @media (max-width:1440px){
+        font-size:$f30+2;
+    }
+}
+h2, .h2 {
+    font-size:$f20+8;
+    @media (max-width:1440px){
+        font-size:$f20+6;
+    }       
+}
+h3, .h3 {
+    font-size:$f20+6;
+    @media (max-width:1440px){
+        font-size:$f20+4;
+    }   
+}
+h4, .h4 {
+    font-size:$f20+4;
+    @media (max-width:1440px){
+        font-size:$f20+2;
+    }   
+}
+h5, .h5 {
+    font-size:$f20;
+    @media (max-width:1440px){
+        font-size:$f16+3;
+    }   
+}
+h6, .h6 {
+    font-size:$f16+2;
+    @media (max-width:1440px){
+        font-size:$f16+1;
+    }   
+}
+a {
+    font-size:$f16; 
+    color: $primary-color; 
+    @include transition (all, 0.5s, ease-in-out);
+    outline:0!important;
+    &:hover, &:focus, &:active {
+        color: $primary-color;
+        text-decoration: $none;
+        outline: $none;
+    }
+}
+p {
+  padding: 0;
+  font-size:$f16;
+  margin: 0 0 15px;
+}
+button, input, img {
+	outline:0!important
+}
+input:not(input[type="checkbox"]) {
+    -webkit-appearance: $none;
+    -moz-appearance: $none;
+    appearance: $none;
+}
+
+label {
+    font-weight: $font-semibold;
+    color: $dark-green-color;
+    font-size: $f14+1;
+}
+/************************************/
+/** Placeholder css **/
+/************************************/
+::-webkit-input-placeholder { 
+  color: rgba(0,0,0,.5);
+}
+:-ms-input-placeholder {
+    color: rgba(0,0,0,.5);
+}
+::placeholder {
+    color: rgba(0,0,0,.5);
+}
+.form-control {
+    background:$white-color; 
+    @include border-radius (6px);  
+    color:$black-color; 
+    padding:4px 15px;    
+    font-size: $f14;
+    &:focus {
+        border: 1px solid $grey-color; 
+        box-shadow:$none;
+    }
+    @media (min-width:1601px) {
+        min-height:50px;
+        line-height:44px;
+    }    
+    @media (max-width:1600px) {
+        border: 1px solid $grey-color2;
+        line-height:44px; 
+        min-height:44px; 
+    }
+}
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus { 
+  -webkit-text-fill-color: $black-color;
+  -webkit-box-shadow: 0 0 0px 1000px #fdfdfd inset;
+  transition: background-color 5000s ease-in-out 0s;
+}
+.error {font-size: $f14; color: $red-color;}
+/************************************/
+/** Input Spinner Hide **/
+/************************************/
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+    -webkit-appearance: $none;
+    -moz-appearance: $none;
+    appearance: $none;
+}
+input[type="number"] {-moz-appearance: textfield;}
+
+// Fieldset
+fieldset{
+    border: 1px solid $grey-color2;
+    margin: 0 0 1.5em 0;
+    padding: 1rem 1.5rem;
+}
+
+fieldset legend {
+    width: $auto;
+    padding: 0 15px;
+    font-size: 1.2em;
+    margin-bottom: 0;
+    text-align: $left;
+    color: $secondary-color;
+    font-weight: $font-bold;
+    display: $inline-block;
+}
+
+/***************************/
+/** Button **/
+/**************************/
+.btn {border:0; cursor: $pointer; white-space: nowrap; @include transition (all, .5s, ease-in-out); outline: 0;
+    &:hover, &:focus {
+        box-shadow:0 0 0 0.2rem rgba(6, 101, 27, .2);
+    }
+}
+.btn-sm {font-size:$f12+2; min-width: 110px; padding:7px 15px; min-height: 36px; line-height: 10px; @include border-radius (6px); font-weight: $font-semibold;}
+.btn-md {min-height:40px; padding:9px 25px; font-weight:$font-medium; min-width:150px; @include border-radius (7px); font-size:$f16; font-weight: $font-semibold;
+    @media (min-width:1601px){
+        min-height:44px;
+    }
+}
+.btn-lg {min-height:46px; padding:12px 25px; font-weight:$font-medium; min-width:200px; @include border-radius (7px); font-size:$f16; font-weight: $font-semibold;
+    @media (min-width:1601px){
+        min-height:50px;
+    }
+}
+.btn-primary {
+    background: $primary-color;
+    color: $secondary-color;
+}
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active, 
+.btn-primary:not(:disabled):not(.disabled).active:focus, .btn-primary:not(:disabled):not(.disabled):active:focus, .show>.btn-primary.dropdown-toggle:focus, 
+.btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active, .show>.btn-primary.dropdown-toggle { 
+    background: $secondary-color;
+    color: $white-color; 
+}
+.btn.disabled, .btn:disabled {
+    color:$grey-color;
+} 
+.btn-secondary {
+    background: $secondary-color;
+    color: $white-color; 
+}
+.btn-transparent{ background:$transparent; border:0; color:$white-color; padding:0;}
+.btn-cancel {
+     background:$grey-color; @include border-radius (7px); border: 0; color:$black-color;  padding:9px 25px; 
+     &:hover {
+         background: $secondary-color;
+         color: $white-color;
+     }
+}
+.btn_group{display: flex;flex-wrap: wrap;align-items: center;}
+
+.pagination {
+    justify-content: end;
+    padding: 0 0 15px 0;
+}
+.page-link {
+    padding: 10px 15px;
+    color:$black-color;
+}
+.page-item.active .page-link {
+    border-color: $primary-color;
+    background: $primary-color;
+    background: linear-gradient(
+125deg, rgba(157,191,43,1) 0%, rgba(6,101,27,1) 100%);
+}
+
+@media (max-width:767px){
+    .btn_group{justify-content: center;}
+}

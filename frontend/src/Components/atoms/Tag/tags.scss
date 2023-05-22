@@ -1,0 +1,52 @@
+@import '../../../assets/css/base.scss';
+
+.active_tags {    
+    @include justify-content (flex-start);
+    @include flex-wrap (wrap);
+    .block_tags{
+        @include border-radius (5px);
+        color: $dark-green-color;
+        text-align: $center;
+        padding: 10px 35px;
+        margin: 20px 10px 0 0;
+        min-width: 150px;
+        cursor: $pointer;
+        font-size: $f14;        
+        border:0;
+        position: $relative;
+    }
+}
+
+
+
+
+.del-btn{
+    height: 32px;
+    width: 30px;
+    background-image: url("./../../../assets/icons8-trash-24.png");
+    background-color: $primary-color;
+    border-radius: 50%;
+    border-color:$white-color;
+    border-width: 4px;
+    border-style: solid;  
+    position: $absolute;
+    top:20px;
+    right:20px;
+}
+.del_div {
+    position: $absolute;
+    right: -9px;
+    top: -13px;
+}
+.del_div .btn {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
+    max-width: 32px;
+    max-height: 32px;
+    background: $white-color;
+    border-radius: 50%;
+    box-shadow: 0 0 5px rgba(0, 0, 0, .5);
+    padding: 3px;
+}

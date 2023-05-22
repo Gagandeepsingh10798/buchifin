@@ -1,0 +1,47 @@
+@import '../../../assets/css/base.scss';
+
+.input_file {    
+    position: $relative;
+    border: 1px solid $grey-color2; 
+    @include border-radius (6px);
+    @media (min-width:1601px){
+        min-height: 48px;
+    }
+    @media (max-width:1600px){
+        min-height: 44px;
+    }
+    [type="file"] {
+        position: $absolute;
+        height: 100%;
+        width: 100%; 
+        @include opacity (0);
+        z-index: 11;
+    }
+    [type="file"] + label {
+        background: $grey-color4;
+        color: $black-color;
+        text-align: $center;
+        position: $absolute;
+        right: 0;
+        top: 0;
+        height:100%;
+        padding:10px;
+        min-width: 120px;
+        @include border-radius (0 5px 5px 0);
+    }
+}
+.file_pic {
+    position: $absolute;
+    left: 0;
+    top:0;
+    width:48px;
+    height: 100%;
+    z-index: 1;
+    img {
+        @include border-radius (6px);
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+}
+

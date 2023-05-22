@@ -1,0 +1,60 @@
+@import '../../../assets/css/base.scss';
+
+.card_items {
+  @include flexbox;
+  @include align-items ($center);
+  border:1px solid $grey-color2;
+  @include border-radius (6px); 
+  position: $relative;
+  padding: 6px;  
+  margin-bottom: 10px;
+  @include justify-content ($space-between);
+  .card_image {
+    @include border-radius (4px); 
+    overflow:$hidden;
+    max-width: 70px;
+    max-height: 70px;
+    width: 70px;
+    height:70px;
+    margin:0;
+    img {
+      object-fit: cover;
+      height: 100%;
+      width: 100%;
+    }
+  }
+  .card_summary {
+    margin-left: 10px;
+    .card_title {
+      margin: 0;
+      color: $dark-green-color;
+      text-transform: $capitalize;
+      font-weight: $font-regular;
+      @media (max-width:768px){
+        padding-right: 50px;
+      }
+    }
+  }   
+}
+
+
+
+.edit_btn {
+  margin: 5px 0 20px 100px;
+  opacity: 1;
+  cursor: pointer;
+  
+}
+
+.delete_btn {
+  margin: 0 0 20px 100px;
+  opacity: 1;
+  cursor: pointer;
+}
+.distance {
+  color: #bfb8af;
+  margin-top: 2px;
+  font-size: 13px;
+  display: block;
+}
+
