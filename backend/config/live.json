@@ -12,24 +12,12 @@
     "FCM_TOKEN": "AAAAxDg2DMg:APA91bH1sVyshALHAZXqTlvl33iIn8v1osQCpsKxwGkFXXv0xOwmmvUxij99hsoVMOyqGAQzBvc_A-Z32xfAMmU8slAOTNgtAgvApUqKWXao7HWmK1GLguTDxSoG3jOIYyeZYKNEOe5_",
     "PATHS": {
         "IMAGE": {
-            "ADMIN": {
-                "ACTUAL": "/uploads/images/admin/",
-                "STATIC": "/admin/profile/image/"
-            },
-            "USER": {
-                "ACTUAL": "/uploads/images/user/",
-                "STATIC": "/user/profile/image/"
-            },
-            "APP_CATEGORY": {
-                "ACTUAL": "/uploads/images/app",
-                "STATIC": "/app/image/"
-            }
+                "ACTUAL": "/uploads/images/",
+                "STATIC": "/image/"
         },
         "FILE": {
-            "DRIVER": {
-                "ACTUAL": "/uploads/files/driver/",
-                "STATIC": "/driver/profile/document/"
-            }
+           "ACTUAL": "/uploads/files",
+            "STATIC": "/document/"
         }
     },
     "OTP_OPTIONS": {

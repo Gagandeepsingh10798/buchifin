@@ -84,7 +84,27 @@ const UserModel = new Schema({
     },
     type: {
         type: String,
-        enum: ['ADMIN', 'SUBADMIN', 'RETAILER', 'MANUFACTURER']
+        enum: ['ADMIN', 'SUBADMIN', 'RETAILER', 'PARTNER', 'MANUFACTURER']
+    },
+    documents: {
+        adhaar: {
+            number: {
+                type: Number
+            },
+            document: {
+                type: String,
+                default: ''
+            }
+        },
+        pan: {
+            number: {
+                type: Number
+            },
+            document: {
+                type: String,
+                default: ''
+            }
+        }
     },
     status: {
         type: String,
