@@ -33,7 +33,7 @@ const FileStorage = multer.diskStorage({
 });
 const FileUpload = multer({
     storage: FileStorage, fileFilter: (req, file, cb) => {
-        if (file.mimetype === "pdf" || file.mimetype === "doc" || file.mimetype === "docx") {
+        if (file.mimetype === "application/pdf" || file.mimetype === "doc" || file.mimetype === "docx") {
             cb(null, true);
         } else {
             cb(null, false);

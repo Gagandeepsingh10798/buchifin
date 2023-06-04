@@ -21,12 +21,12 @@ Image Upload
 */
 router.post("/image/upload", service.upload.ImageUpload.single('image'), (req,res,next)=>{
     return res.status(200).send({
-        filename: req.file.filename
+        filePath: '/image/'+req.file.filename
     })
 });
 router.post("/file/upload", service.upload.FileUpload.single('file'),(req,res,next)=>{
     return res.status(200).send({
-        filename: req.file.filename
+        filePath: '/file/'+req.file.filename
     })
 });
 /*
