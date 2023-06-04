@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const UserModel = new Schema({
+    position:{
+        type: String,
+        default: ''
+    },
     address: {
         lat: {
             type: String,
@@ -19,6 +23,10 @@ const UserModel = new Schema({
             required: true
         },
         state: {
+            type: String,
+            required: true
+        },
+        country: {
             type: String,
             required: true
         },
@@ -66,13 +74,15 @@ const UserModel = new Schema({
         type: String,
         default: ''
     },
-    lat: {
-        type: String,
-        default: ''
-    },
-    lng: {
-        type: String,
-        default: ''
+    liveLocation:{
+        lat: {
+            type: String,
+            default: ''
+        },
+        lng: {
+            type: String,
+            default: ''
+        },
     },
     deviceType: {
         type: String,
@@ -89,7 +99,7 @@ const UserModel = new Schema({
     documents: {
         adhaar: {
             number: {
-                type: Number
+                type: String
             },
             document: {
                 type: String,
@@ -98,7 +108,7 @@ const UserModel = new Schema({
         },
         pan: {
             number: {
-                type: Number
+                type: String
             },
             document: {
                 type: String,

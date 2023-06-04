@@ -32,5 +32,5 @@ router.post("/file/upload", service.upload.FileUpload.single('file'),(req,res,ne
 /*
 Retailers CRUDs
 */
-router.post("/retailer/signup", controllers.admin.signUp);
+router.post("/retailer/signup", validations.admin.isAdminValid,controllers.admin.retailer.signUp);
 module.exports = router;

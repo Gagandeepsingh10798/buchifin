@@ -201,20 +201,27 @@ module.exports = {
   retailer: {
     signUp: async (req, res, next) => {
       try {
-        req.body.password = await universal.hashPasswordUsingBcrypt(req.body.password);
-        const isEmailUsed = await Models.User.findOne({ email: req.body.email, isDeleted: false, type: 'RETAILER' }).lean();
+        let retailerData = req.body.retailer;
+        let firmData = req.body.firm;
+        retailerData.password = await universal.hashPasswordUsingBcrypt(retailerData.password);
+        const isEmailUsed = await Models.User.findOne({ email: retailerData.email, isDeleted: false, type: 'RETAILER' }).lean();
         if (isEmailUsed) {
           return await universal.response(res, CODES.BAD_REQUEST, MESSAGES.EMAIL_ALREADY_ASSOCIATED_WITH_ANOTHER_ACCOUNT, {}, req.lang);
         }
-        const isPhoneUsed = await Models.User.findOne({ phone: req.body.phone, countryCode: req.body.countryCode, isDeleted: false, type: 'RETAILER' }).lean();
+        const isPhoneUsed = await Models.User.findOne({ phone: retailerData.phone, countryCode: retailerData.countryCode, isDeleted: false, type: 'RETAILER' }).lean();
         if (isPhoneUsed) {
           return await universal.response(res, CODES.BAD_REQUEST, MESSAGES.PHONE_NUMBER_ALREADY_ASSOCIATED_WITH_ANOTHER_ACCOUNT, {}, req.lang);
         }
-        req.body.type = "RETAILER"
-        let retailer = await Models.User(req.body).save();
+        retailerData.type = "RETAILER"
+        let retailer = await Models.User(retailerData).save();
         retailer = await Models.User.findById(ObjectId(retailer.id), Projections.signUp).lean();
-        
-        await Models.FirmDetails(req.body.firm).save();
+
+        firmData.retailer = ObjectId(retailer._id);
+        // if(firmData.partners.length){
+
+        // }
+        let firm = await Models.Firm(firmData).save();
+        firm = await Models.Firm.findById(ObjectId(firm.id), Projections.signUp).lean();
         retailer = {
           status: CODES.OK,
           message: MESSAGES.ADMIN_REGISTERED_SUCCESSFULLY,

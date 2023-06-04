@@ -37,6 +37,7 @@ module.exports = {
   },
   validateSignUp: async (req, property) => {
     let schema = joi.object().keys({
+      profilePic: joi.any(),
       address: joi.object({
         lat: joi.string().default(''),
         lng: joi.string().default(''),
@@ -45,6 +46,10 @@ module.exports = {
         state: joi.string().required(),
         country: joi.string().required(),
         zip: joi.string().required()
+      }).required(),
+      liveLocation: joi.object({
+        lat: joi.string().default(''),
+        lng: joi.string().default('')
       }).required(),
       dob: joi.date(),
       lat: joi.string().default(''),
@@ -64,7 +69,6 @@ module.exports = {
         .trim()
         .min(2)
         .required(),
-      // profilePic: joi.string().trim().lowercase().required(),
       password: joi.string().required(),
       deviceType: joi.string().optional(),
       deviceToken: joi.string().optional(),

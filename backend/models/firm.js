@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const ObjectId = require('mongoose').Types.ObjectId;
 const Schema = mongoose.Schema;
-const FirmDetailsModel = new Schema({
+const FirmModel = new Schema({
     retailer:{
         type: ObjectId,
         ref:'User'
@@ -15,7 +15,7 @@ const FirmDetailsModel = new Schema({
     licenses: {
         insecticide: {
             number: {
-                type: Number
+                type: String
             },
             document: {
                 type: String,
@@ -24,7 +24,7 @@ const FirmDetailsModel = new Schema({
         },
         fertilizer: {
             number: {
-                type: Number
+                type: String
             },
             document: {
                 type: String,
@@ -33,7 +33,7 @@ const FirmDetailsModel = new Schema({
         },
         seed: {
             number: {
-                type: Number
+                type: String
             },
             document: {
                 type: String,
@@ -45,7 +45,7 @@ const FirmDetailsModel = new Schema({
                 type: String
             },
             number: {
-                type: Number
+                type: String
             },
             document: {
                 type: String,
@@ -55,7 +55,7 @@ const FirmDetailsModel = new Schema({
     },
     gst: {
         number: {
-            type: Number
+            type: String
         },
         document: {
             type: String,
@@ -74,7 +74,7 @@ const FirmDetailsModel = new Schema({
     documents:{
         govcertificate: {
             number: {
-                type: Number
+                type: String
             },
             document: {
                 type: String,
@@ -108,5 +108,5 @@ const FirmDetailsModel = new Schema({
     toObject: { virtuals: true },
     toJSON: { virtuals: true }
 });
-const FirmDetails = mongoose.model('FirmDetails', FirmDetailsModel);
-module.exports = FirmDetails;
+const Firm = mongoose.model('Firm', FirmModel);
+module.exports = Firm;
