@@ -234,6 +234,87 @@ module.exports = {
       } catch (error) {
         next(error);
       }
+    },
+    get: async (req, res, next) => {
+      try {
+        let retailerId = req.params.id === "all" ? null : ObjectId(req.params.id);
+        if (retailerId) {
+          let retailer = await Models.User.findOne({ _id: retailerId, type: 'RETAILER', isDeleted: false }, Projections.getProfile).lean();
+          if (!retailer) {
+            return await universal.response(res, CODES.BAD_REQUEST, MESSAGES.NO_ANY_CUSTOMER_FOUND, {}, req.lang);
+          }
+          let firm = await Models.Firm.findOne({ retailer: retailerId, isDeleted: false }).lean();
+          let payload = {
+            status: CODES.OK,
+            MESSAGES: MESSAGES.PROFILE_FETCHED_SUCCESSFULLY,
+            data: {
+              retailer,
+              firm: firm ? firm : {}
+            }
+          }
+          return await universal.response(res, payload.status, payload.message, payload.data, req.lang);
+        }
+        else {
+
+          let retailers = await Models.User.aggregate([
+            {
+              $match: { type: 'RETAILER' } // Filter for users with type 'RETAILER'
+            },
+            {
+              $lookup: {
+                from: 'firms',
+                let: { retailerId: '$_id' },
+                pipeline: [
+                  {
+                    $match: {
+                      $expr: { $eq: ['$retailer', '$$retailerId'] }
+                    }
+                  }
+                ],
+                as: 'firm'
+              }
+            },
+            {
+              $project: {
+                _id: 0,
+                retailer: {
+                  _id: '$_id',
+                  position: '$position',
+                  address: '$address',
+                  profilePic: '$profilePic',
+                  gender: '$gender',
+                  firstName: '$firstName',
+                  lastName: '$lastName',
+                  email: '$email',
+                  phone: '$phone',
+                  countryCode: '$countryCode',
+                  password: '$password',
+                  liveLocation: '$liveLocation',
+                  deviceType: '$deviceType',
+                  deviceToken: '$deviceToken',
+                  type: '$type',
+                  documents: '$documents',
+                  status: '$status',
+                  dob: '$dob',
+                  isDeleted: '$isDeleted',
+                  createdAt: '$createdAt',
+                  updatedAt: '$updatedAt'
+                },
+                firm: { $arrayElemAt: ['$firm', 0] }
+              }
+            }
+          ]);
+          retailers = {
+            data: retailers,
+            status: CODES.OK,
+            message: MESSAGES.PROFILE_FETCHED_SUCCESSFULLY
+          }
+          return await universal.response(res, retailers.status, retailers.message, retailers.data, req.lang);
+
+        }
+      } catch (error) {
+        next(error);
+      }
     }
   }
 };
