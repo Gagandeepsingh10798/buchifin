@@ -1,0 +1,6 @@
+version: 0.0
+os: linux
+hooks:
+  AfterInstall:
+    - location: backend_pipeline.sh
+      runas: ubuntu
