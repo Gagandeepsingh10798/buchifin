@@ -54,49 +54,4 @@ module.exports = {
             }
         }
     },
-	'/api/v1/retailer/create': {
-        "ALL": {
-            "POST": {
-                "auth": true,
-                "value": true,
-                "code": 6
-            }
-        }
-    },
-    '/api/v1/retailer/get/all': {
-        "ALL": {
-            "POST": {
-                "auth": true,
-                "value": true,
-                "code": 7
-            }
-        }
-    },
-	'/api/v1/retailer/get/id': {
-        "ALL": {
-            "POST": {
-                "auth": true,
-                "value": true,
-                "code": 8
-            }
-        }
-    },
-	'/api/v1/retailer/update/id': {
-        "ALL": {
-            "POST": {
-                "auth": true,
-                "value": true,
-                "code": 9
-            }
-        }
-    },
-    '/api/v1/company/update/id': {
-        "ALL": {
-            "POST": {
-                "auth": true,
-                "value": true,
-                "code": 9
-            }
-        }
-    }
 }

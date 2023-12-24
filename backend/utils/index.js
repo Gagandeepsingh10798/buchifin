@@ -30,6 +30,7 @@ const jwtVerify = async (token, refresh) => {
         return false
     }
 }
+const { pathToRegexp } = require('path-to-regexp');
 
 const AuthHelper = async (req, res, next) => {
     try {
@@ -40,14 +41,13 @@ const AuthHelper = async (req, res, next) => {
 
         if (!decodeData) {
             const temp = await Models.AuthToken.findOneAndUpdate({ token: accessToken }, { expired: true });
-            console.log('TEMP', temp);
             return res.status(401).send({ message: "Invalid authorization token" });
         }
 
         const userData = await Models.User.findOne({ _id: decodeData._id, isDeleted: false }).lean();
         if (!userData) return res.status(404).send({ message: "User not found" });
 
-        let isAllowed = await Models.ApiPermission.findOne({
+        let permissions = await Models.ApiPermission.find({
             path: req.path,
             [req.method]: {
                 value: true,
@@ -55,11 +55,32 @@ const AuthHelper = async (req, res, next) => {
             },
             userType: { $in: userData.type }
         }).lean();
+
+        let isAllowed = false;
+
+        for (const permission of permissions) {
+            const regex = pathToRegexp(permission.path)
+            if (regex.test(req.path)) {
+                isAllowed = true
+                break
+            }
+        }
+
         if (!isAllowed) {
-            isAllowed = await Models.ApiPermission.findOne({
-                path: req.path,
-                userType: 'ALL'
-            }).lean();
+            const permissions = await Models.ApiPermission.find({
+                [req.method]: {
+                    auth: true,
+                    value: true,
+                },
+                userType: 'ALL',
+            }).lean()
+            for (const permission of permissions) {
+                const regex = pathToRegexp(permission.path)
+                if (regex.test(req.path)) {
+                    isAllowed = true
+                    break
+                }
+            }
             if (!isAllowed || (isAllowed && !isAllowed[req.method].auth && !isAllowed[req.method].value)) return res.status(403).send({ message: "Not Authorized" });
         }
         req.user = userData;
@@ -71,6 +92,34 @@ const AuthHelper = async (req, res, next) => {
 }
 
 module.exports = {
+    Authorization: async (req, res, next) => {
+        try {
+            let isApiAuthFree = false
+            const permissions = await Models.ApiPermission.find({
+                [req.method]: {
+                    auth: false,
+                    value: true,
+                },
+                userType: 'ALL',
+            }).lean()
+
+            for (const permission of permissions) {
+                const regex = pathToRegexp(permission.path)
+                if (regex.test(req.path)) {
+                    isApiAuthFree = true
+                    break
+                }
+            }
+            if(!isApiAuthFree){
+                return AuthHelper(req,res,next);
+            }
+            next()
+            
+        } catch (error) {
+            console.error('Error in Authorization:', error)
+            next(error)
+        }
+    },
     /*
     Response Functions
     */
@@ -244,30 +293,6 @@ module.exports = {
         }
         console.log({ status: status[statusString] });
         return status[statusString]
-    },
-    Authorization: async (req, res, next) => {
-        try {
-            let isApiAuthFree = false
-            const permissions = await Models.ApiPermission.find({
-                [req.method]: {
-                    auth: false,
-                    value: false,
-                },
-                userType: 'ALL',
-            }).lean()
-
-            for (const permission of permissions) {
-                const regex = pathToRegexp(permission.path)
-                if (regex.test(req.path)) {
-                    isApiAuthFree = true
-                    break
-                }
-            }
-            next()
-        } catch (error) {
-            console.error('Error in Authorization:', error)
-            next(error)
-        }
     },
     generatePassword: () => {
         const length = 8;
