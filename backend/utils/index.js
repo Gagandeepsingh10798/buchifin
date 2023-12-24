@@ -7,12 +7,12 @@ const path = require("path");
 const ffmpeg = require('fluent-ffmpeg')
 const Models = require('../models');
 const Queues = require('./queues');
-const {uploadFileToS3} = require('./S3Bucket')
+const { uploadFileToS3 } = require('./S3Bucket')
 const jwtVerify = async (token, refresh) => {
     try {
-		console.log('TOKEN', token);
-		console.log('REFRESH', refresh);
-		
+        console.log('TOKEN', token);
+        console.log('REFRESH', refresh);
+
         if (!refresh) {
             let tokenExists = await Models.AuthToken.findOne({ token: token, expired: false }).lean();
             if (tokenExists) {
@@ -40,7 +40,7 @@ const AuthHelper = async (req, res, next) => {
 
         if (!decodeData) {
             const temp = await Models.AuthToken.findOneAndUpdate({ token: accessToken }, { expired: true });
-			console.log('TEMP', temp);
+            console.log('TEMP', temp);
             return res.status(401).send({ message: "Invalid authorization token" });
         }
 
@@ -74,58 +74,58 @@ module.exports = {
     /*
     Response Functions
     */
-	handleUploadedFiles: async (s3Datas, files, payload, createdBy, docData, type) => {
-		const filesLookup = files.reduce((acc, file) => {
-		  acc[file.fieldname] = file;
-		  return acc;
-		}, {});
-;		for (const [index, s3Data] of s3Datas.entries()) {
-		  const docType = s3Data.type;
-		  const file = filesLookup[docType];
-		  if (!file || !s3Data) continue;
-		  const documentDetails = {
-			s3Key: s3Data.key,
-			url: s3Data.Location,
-			documentType: file.mimetype,
-			uploadedBy: createdBy,
-			originalName: file.originalname,
-			size: file.size,
-		  };
-	  
-		  if (type === "retailer") {
-			const userIndex = payload.findIndex(retailer => retailer.user === s3Data.description.user);
-			if (userIndex !== -1) {
-			  if (file.description.type === "profilePic") {
-				payload[userIndex].profilePic = s3Data.Location;
-				documentDetails.type = "profilePic";
-			  } else if (["aadhar", "pan"].includes(file.description.type)) {
-				const doc = payload[userIndex].documents.find(doc => doc.type === file.description.type);
-				if (doc) {
-				  doc.url = s3Data.Location;
-				  documentDetails.number = doc.number;
-				  documentDetails.type = doc.type;
-				}
-			  }
-			}
-		  } else if (type === "firm") {
-				if (docType === "firmProfilePic") {
-					payload.firmAddress.profilePic = s3Data.Location;
-					documentDetails.type = "profilePic";
-				} else {
-					const doc = payload.documents.find(doc => doc.type === file.description.type);
-					if (doc) {
-						doc.url = s3Data.Location;
-						documentDetails.number = doc.number;
-						documentDetails.type = doc.type;
-					}
-				}
-			}
-	
-			docData.push(documentDetails);
-		}
-	
-		return { updatedPayload: payload };
-	},
+    handleUploadedFiles: async (s3Datas, files, payload, createdBy, docData, type) => {
+        const filesLookup = files.reduce((acc, file) => {
+            acc[file.fieldname] = file;
+            return acc;
+        }, {});
+        ; for (const [index, s3Data] of s3Datas.entries()) {
+            const docType = s3Data.type;
+            const file = filesLookup[docType];
+            if (!file || !s3Data) continue;
+            const documentDetails = {
+                s3Key: s3Data.key,
+                url: s3Data.Location,
+                documentType: file.mimetype,
+                uploadedBy: createdBy,
+                originalName: file.originalname,
+                size: file.size,
+            };
+
+            if (type === "retailer") {
+                const userIndex = payload.findIndex(retailer => retailer.user === s3Data.description.user);
+                if (userIndex !== -1) {
+                    if (file.description.type === "profilePic") {
+                        payload[userIndex].profilePic = s3Data.Location;
+                        documentDetails.type = "profilePic";
+                    } else if (["aadhar", "pan"].includes(file.description.type)) {
+                        const doc = payload[userIndex].documents.find(doc => doc.type === file.description.type);
+                        if (doc) {
+                            doc.url = s3Data.Location;
+                            documentDetails.number = doc.number;
+                            documentDetails.type = doc.type;
+                        }
+                    }
+                }
+            } else if (type === "firm") {
+                if (docType === "firmProfilePic") {
+                    payload.firmAddress.profilePic = s3Data.Location;
+                    documentDetails.type = "profilePic";
+                } else {
+                    const doc = payload.documents.find(doc => doc.type === file.description.type);
+                    if (doc) {
+                        doc.url = s3Data.Location;
+                        documentDetails.number = doc.number;
+                        documentDetails.type = doc.type;
+                    }
+                }
+            }
+
+            docData.push(documentDetails);
+        }
+
+        return { updatedPayload: payload };
+    },
 
     errHandler: async (err, req, res, next) => {
         const errorRecord = new Models.ErrorHandler({
@@ -137,7 +137,7 @@ module.exports = {
             url: req.originalUrl
         });
         await errorRecord.save();
-        return res.status(err.status || 500).send({status:err.status || 500, message: err.message || '', data:{}});
+        return res.status(err.status || 500).send({ status: err.status || 500, message: err.message || '', data: {} });
     },
     errMessage: async (res, status, message, lang) => { await res.status(status).send({ status: status, message: Messages[lang][message] }); },
     sucMessage: async (res, status, message, data, lang) => { await res.send({ status: status, message: Messages[lang][message], result: data }); },
@@ -247,22 +247,26 @@ module.exports = {
     },
     Authorization: async (req, res, next) => {
         try {
-			const urlpath = req.path.toLowerCase()
-			console.log("PATH", urlpath)
-            const apiExists = await Models.ApiPermission.findOne({ path: urlpath}).lean();
-			console.log('API EXIST', apiExists);
-            if (!apiExists || (apiExists && !apiExists[req.method].value)) {
-                throw new Error("Invalid Route");
+            let isApiAuthFree = false
+            const permissions = await Models.ApiPermission.find({
+                [req.method]: {
+                    auth: false,
+                    value: false,
+                },
+                userType: 'ALL',
+            }).lean()
+
+            for (const permission of permissions) {
+                const regex = pathToRegexp(permission.path)
+                if (regex.test(req.path)) {
+                    isApiAuthFree = true
+                    break
+                }
             }
-            const isApiAuthFree = await Models.ApiPermission.findOne({ path: req.path, userType: 'ALL' }).lean();
-            if (isApiAuthFree && !isApiAuthFree[req.method].auth) {
-                next();
-                return;
-            }
-            AuthHelper(req, res, next);
-            return;
+            next()
         } catch (error) {
-            next(error);
+            console.error('Error in Authorization:', error)
+            next(error)
         }
     },
     generatePassword: () => {
