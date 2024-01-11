@@ -54,4 +54,32 @@ module.exports = {
             }
         }
     },
+    '/api/v1/retailer': {
+        "SUPER_ADMIN": {
+            "POST": {
+                "auth": true,
+                "value": true,
+                "code": 6
+            },
+            "GET": {
+                "auth": true,
+                "value": true,
+                "code": 6
+            }
+        },
+    },
+    '/api/v1/retailer/:id': {
+        "SUPER_ADMIN": {
+            "GET": {
+                "auth": true,
+                "value": true,
+                "code": 6
+            },
+            "PUT": {
+                "auth": true,
+                "value": true,
+                "code": 6
+            }
+        }
+    },
 }

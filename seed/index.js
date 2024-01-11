@@ -30,39 +30,38 @@ module.exports = {
         const session = await mongoose.startSession();
         session.startTransaction();
         try {
-            let promises = [];
-            let paths = [];
-            for (let path in permissions) {
-                paths.push(path);
-                for (let userType in permissions[path]) {
-                    for (let method in permissions[path][userType]) {
-                        let methodPermission = permissions[path][userType][method];
-                        let query = {
-                            path: path,
-                            userType: userType
-                        };
-                        let update = {
-                            $setOnInsert: { // Only set these values on insert, not on update
-                                [`${method}.value`]: methodPermission.value,
-                                [`${method}.auth`]: methodPermission.auth
-                            }
-                        };
-                        promises.push(Models.ApiPermission.findOneAndUpdate(query, update, { upsert: true, session }).exec());
-                    }
-                }
+          let paths = [];
+          for (let path in permissions) {
+            paths.push(path);
+            for (let userType in permissions[path]) {
+              for (let method in permissions[path][userType]) {
+                let methodPermission = permissions[path][userType][method];
+                let query = {
+                  path: path,
+                  userType: userType
+                };
+                let update = {
+                  $set: {
+                    [`${method}.value`]: methodPermission.value,
+                    [`${method}.auth`]: methodPermission.auth
+                  }
+                };
+                await Models.ApiPermission.findOneAndUpdate(query, update, { upsert: true, session }).exec();
+              }
             }
-
-            await Models.ApiPermission.deleteMany({ path: { $nin: paths } }).session(session).exec();
-            await Promise.all(promises);
-            await session.commitTransaction();
-            console.log('Permissions successfully populated!');
+          }
+      
+          await Models.ApiPermission.deleteMany({ path: { $nin: paths } }).session(session).exec();
+          await session.commitTransaction();
+          console.log('Permissions successfully populated!');
         } catch (error) {
-            await session.abortTransaction();
-            console.error('Failed to populate permissions:', error);
-            throw error;
+          await session.abortTransaction();
+          console.error('Failed to populate permissions:', error);
+          throw error;
         } finally {
-            session.endSession();
+          session.endSession();
         }
-    }
+      }
+      
 
 };

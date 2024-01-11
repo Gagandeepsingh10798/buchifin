@@ -46,14 +46,12 @@ const AuthHelper = async (req, res, next) => {
         const userData = await Models.User.findOne({ _id: decodeData._id, isDeleted: false }).lean();
         if (!userData) return res.status(404).send({ message: "User not found" });
 
-        let permissions = await Models.ApiPermission.find({
-            path: req.path,
-            [req.method]: {
-                value: true,
-                auth: true
-            },
+        const query = {
+            [`${req.method}.value`]: true,
+            [`${req.method}.auth`]: true,
             userType: { $in: userData.type }
-        }).lean();
+        }
+        let permissions = await Models.ApiPermission.find(query).lean();
 
         let isAllowed = false;
 
@@ -67,10 +65,8 @@ const AuthHelper = async (req, res, next) => {
 
         if (!isAllowed) {
             const permissions = await Models.ApiPermission.find({
-                [req.method]: {
-                    auth: true,
-                    value: true,
-                },
+                [`${req.method}.value`]: true,
+                [`${req.method}.auth`]: true,
                 userType: 'ALL',
             }).lean()
             for (const permission of permissions) {
@@ -95,10 +91,8 @@ module.exports = {
         try {
             let isApiAuthFree = false
             const permissions = await Models.ApiPermission.find({
-                [req.method]: {
-                    auth: false,
-                    value: true,
-                },
+                [`${req.method}.value`]: true,
+                [`${req.method}.auth`]: false,
                 userType: 'ALL',
             }).lean()
 
@@ -109,11 +103,11 @@ module.exports = {
                     break
                 }
             }
-            if(!isApiAuthFree){
-                return AuthHelper(req,res,next);
+            if (!isApiAuthFree) {
+                return AuthHelper(req, res, next);
             }
             next()
-            
+
         } catch (error) {
             console.error('Error in Authorization:', error)
             next(error)

@@ -143,7 +143,7 @@ module.exports = {
     try {
 
       const pipeline = [
-        { $match: { type: config.get("USER_TYPES.RETAILER_ADMIN"), isDeleted: false, _id: new ObjectId(req.body.id) } },
+        { $match: { type: config.get("USER_TYPES.RETAILER_ADMIN"), isDeleted: false, _id: new ObjectId(req.params.id) } },
         {
           $lookup: {
             from: 'users',
@@ -190,7 +190,7 @@ module.exports = {
   },
   updateById: async (req, res, next) => {
     try {
-      const userId = req.body.id;
+      const userId = req.params.id;
       const updates = req.body;
 
       if (!ObjectId.isValid(userId)) {
