@@ -9,9 +9,6 @@ const Models = require('../models');
 const { uploadFileToS3 } = require('./S3Bucket')
 const jwtVerify = async (token, refresh) => {
     try {
-        console.log('TOKEN', token);
-        console.log('REFRESH', refresh);
-
         if (!refresh) {
             let tokenExists = await Models.AuthToken.findOne({ token: token, expired: false }).lean();
             if (tokenExists) {

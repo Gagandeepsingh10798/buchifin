@@ -82,4 +82,13 @@ module.exports = {
             }
         }
     },
+    '/api/v1/retailer/firm/:id': {
+        "SUPER_ADMIN": {
+            "GET": {
+                "auth": true,
+                "value": true,
+                "code": 6
+            },
+        }
+    },
 }

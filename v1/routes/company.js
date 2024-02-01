@@ -22,4 +22,5 @@ router.post("/update/id", upload.upload.fields([
 ]), upload.setFilename, controllers.company.updateById);
 
 
+
 module.exports = router;

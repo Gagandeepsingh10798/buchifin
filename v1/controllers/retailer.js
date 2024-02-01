@@ -281,5 +281,28 @@ module.exports = {
       console.log(error);
       next(error);
     }
-  }
+  },
+  getFirms: async (req, res, next) => {
+    try {
+
+      let firm = await Models.Company.findOne({associateTo: new ObjectId(req.params.id)}).lean()
+      if (firm && firm.partners) {
+        const partnersDetails = await Promise.all(
+          firm.partners.map(partnerId => Models.User.findOne({_id: partnerId}))
+        );
+        firm.partners = partnersDetails;
+      }
+      const result = {
+        status: CODES.OK,
+        message: MESSAGES.DATA_FETCHED_SUCCESSFULLY,
+        data: firm
+      };
+
+      return universal.response(res, result.status, result.message, result.data, req.lang);
+
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  },
 };
