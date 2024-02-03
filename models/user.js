@@ -7,7 +7,7 @@ const ObjectId = mongoose.Types.ObjectId;
 const UserModel = new Schema({
   profilePic: {
     type: String,
-    default: "https://buchifin.s3.ap-south-1.amazonaws.com/profilepics/defaultuser.jpg",
+    default: "/profilepics/defaultuser.jpg",
   },
   aadhaar: {
     number: {

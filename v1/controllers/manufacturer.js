@@ -10,33 +10,33 @@ const ObjectId = require("mongoose").Types.ObjectId;
 module.exports = {
   create: async (req, res, next) => {
     try {
-      const { retailer, firm } = req.body;
+      const { manufacturer, firm } = req.body;
 
-      const emailExists = await Models.User.findOne({ email: retailer.email });
+      const emailExists = await Models.User.findOne({ email: manufacturer.email });
       if (emailExists) {
         return universal.response(res, CODES.BAD_REQUEST, MESSAGES.EMAIL_ALREADY_ASSOCIATED_WITH_ANOTHER_ACCOUNT, {}, req.lang);
       }
 
-      const phoneExists = await Models.User.findOne({ "phone.phone": retailer.phone[0].phone });
+      const phoneExists = await Models.User.findOne({ "phone.phone": manufacturer.phone[0].phone });
       if (phoneExists) {
         return universal.response(res, CODES.BAD_REQUEST, MESSAGES.PHONE_ALREADY_ASSOCIATED_WITH_ANOTHER_ACCOUNT, {}, req.lang);
       }
 
-      retailer.createdBy = req.user._id;
-      retailer.createdByType = req.userType;
-      retailer.password = await universal.hashPasswordUsingBcrypt(retailer.password)
-      retailer.type = [USER_TYPES.RETAILER_ADMIN];
+      manufacturer.createdBy = req.user._id;
+      manufacturer.createdByType = req.userType;
+      manufacturer.password = await universal.hashPasswordUsingBcrypt(manufacturer.password)
+      manufacturer.type = [USER_TYPES.MANUFACTURER_ADMIN];
 
-      const savedRetailer = await new Models.User(retailer).save();
+      const savedmanufacturer = await new Models.User(manufacturer).save();
 
-      firm.associateTo = savedRetailer._id
-      firm.associateType = USER_TYPES.RETAILER_ADMIN
+      firm.associateTo = savedmanufacturer._id
+      firm.associateType = USER_TYPES.MANUFACTURER_ADMIN
       firm.createdBy = req.user._id
       firm.createdByType = req.userType
 
       const savedFirm = await new Models.Company(firm).save();
-      return universal.response(res, CODES.OK, MESSAGES.RETAILER_REGISTERED_SUCCESSFULLY, {
-        retailer: savedRetailer,
+      return universal.response(res, CODES.OK, MESSAGES.MANUFACTURER_REGISTERED_SUCCESSFULLY, {
+        manufacturer: savedmanufacturer,
         firm: savedFirm
       })
 
@@ -54,7 +54,7 @@ module.exports = {
       const searchQuery = req.query.search || '';
 
       const countPipeline = [
-        { $match: { type: config.get("USER_TYPES.RETAILER_ADMIN"), isDeleted: false } },
+        { $match: { type: config.get("USER_TYPES.MANUFACTURER_ADMIN"), isDeleted: false } },
         {
           $match: {
             $or: [
@@ -73,7 +73,7 @@ module.exports = {
       ];
 
       const pipeline = [
-        { $match: { type: config.get("USER_TYPES.RETAILER_ADMIN"), isDeleted: false } },
+        { $match: { type: config.get("USER_TYPES.MANUFACTURER_ADMIN"), isDeleted: false } },
         {
           $lookup: {
             from: 'users',
@@ -118,17 +118,17 @@ module.exports = {
         { $limit: itemsPerPage }
       ]
 
-      const retailers = await Models.User.aggregate(pipeline).exec();
-      const totalRetailers = (await Models.User.aggregate(countPipeline).exec()).length;
+      const manufacturers = await Models.User.aggregate(pipeline).exec();
+      const totalmanufacturers = (await Models.User.aggregate(countPipeline).exec()).length;
 
       const result = {
         status: CODES.OK,
         message: MESSAGES.DATA_FETCHED_SUCCESSFULLY,
         data: {
-          records: retailers,
+          records: manufacturers,
           page,
-          count: totalRetailers,
-          totalPages: Math.ceil(totalRetailers / itemsPerPage)
+          count: totalmanufacturers,
+          totalPages: Math.ceil(totalmanufacturers / itemsPerPage)
         }
       };
 
@@ -143,7 +143,7 @@ module.exports = {
     try {
 
       const pipeline = [
-        { $match: { type: config.get("USER_TYPES.RETAILER_ADMIN"), isDeleted: false, _id: new ObjectId(req.params.id) } },
+        { $match: { type: config.get("USER_TYPES.MANUFACTURER_ADMIN"), isDeleted: false, _id: new ObjectId(req.params.id) } },
         {
           $lookup: {
             from: 'users',
@@ -170,15 +170,15 @@ module.exports = {
         }
       ]
 
-      const retailer = await Models.User.aggregate(pipeline).exec();
-      if (!retailer.length) {
-        return await universal.response(res, CODES.BAD_REQUEST, MESSAGES.RETAILER_NO_FOUND, {})
+      const manufacturer = await Models.User.aggregate(pipeline).exec();
+      if (!manufacturer.length) {
+        return await universal.response(res, CODES.BAD_REQUEST, MESSAGES.manufacturer_NO_FOUND, {})
       }
 
       const result = {
         status: CODES.OK,
         message: MESSAGES.DATA_FETCHED_SUCCESSFULLY,
-        data: retailer[0]
+        data: manufacturer[0]
       };
 
       return universal.response(res, result.status, result.message, result.data, req.lang);
